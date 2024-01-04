@@ -8,12 +8,21 @@
     <link rel="stylesheet" href="chessboardjs-1.0.0/css/chessboard-1.0.0.css">
 </head>
 <body>
-  <div id="board1" style="width: 400px"></div>
-  <!-- Include Chessboard.js script -->
-<!-- Include Chessboard.js script -->
-  <script src="chessboardjs-1.0.0/js/chessboard-1.0.0.js"></script>
-  <script src="bundle.js"></script> <!-- Use the bundled Chess.js -->
-  <script src="chessboard-activation.js"></script>
+  <div style="display: flex;">
+    <div id="board1" style="width: 400px"></div>
+    <form action="" id="pgnForm">
+      <textarea type="text" name="pgn" id="pgnInput" style="width: 400px; height: 390px; resize: none;"></textarea>
+      <button type="submit" id="analyze-pgn">submit</button>
+    </form>
+  </div>
+  <div>
+    <button type="button" id="previous-move">previous</button>
+    <button type="button" id="next-move">next</button>
+    <button type="button" id="initial-position">initial position</button>
+  </div>
 
+  <script type="module" src="./node_modules/chess.js/dist/esm/chess.js"></script><!-- Include the necessary scripts from bundle.js -->
+  <script src="chessboardjs-1.0.0/js/chessboard-1.0.0.js"></script>
+  <script type="module" src="index.js"></script>
 </body>
 </html>
