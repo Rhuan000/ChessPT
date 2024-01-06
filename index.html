@@ -4,25 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ChessPT</title>
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="./jquery.min.js"></script>
     <link rel="stylesheet" href="chessboardjs-1.0.0/css/chessboard-1.0.0.css">
+    <link rel="shortcut icon" href="" type="image/x-icon">
 </head>
 <body>
   <div style="display: flex;">
     <div id="board1" style="width: 400px"></div>
     <form action="" id="pgnForm">
       <textarea type="text" name="pgn" id="pgnInput" style="width: 400px; height: 390px; resize: none;"></textarea>
-      <button type="submit" id="analyze-pgn">submit</button>
+      <button type="submit" id="analyze-pgn">Submit</button>
     </form>
   </div>
   <div>
-    <button type="button" id="previous-move">previous</button>
-    <button type="button" id="next-move">next</button>
-    <button type="button" id="initial-position">initial position</button>
+    <button type="button" id="previous-move">Previous</button>
+    <button type="button" id="next-move">Next</button>
+    <button type="button" id="initial-position">Initial Position</button>
   </div>
 
-  <script type="module" src="./node_modules/chess.js/dist/esm/chess.js"></script><!-- Include the necessary scripts from bundle.js -->
+  <!-- Include chess.js -->
+  <script type="module" src="./node_modules/chess.js/dist/esm/chess.js"></script>
+  <!-- Include chessboard.js -->
   <script src="chessboardjs-1.0.0/js/chessboard-1.0.0.js"></script>
+  <!-- Include your main script -->
   <script type="module" src="index.js"></script>
 </body>
 </html>
