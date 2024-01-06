@@ -1,7 +1,7 @@
-#ChessPT
+# ChessPT
 Is a project with the objective of helping beginners and intermediate chess players in the process of analyzing chess games, using artificial intelligence as a mentor.
 
-## road to finish
+## Road to finish
 - Display a chessboard ✔
 - Chess game logic ✔
 - Load games through PGN ✔
@@ -12,3 +12,12 @@ Is a project with the objective of helping beginners and intermediate chess play
 - Mentor feedback message per move ✖
 - improve app appareance ✖
 - Lichess history ✖
+
+## Credits
+
+Sincere gratitude to the contributors and projects below.
+
+- [Chessboard.js by oakmac](https://github.com/oakmac/chessboardjs)
+- [Chess.js by jhlywa](https://github.com/jhlywa/chess.js)
+- [Stockfish.js by nmrugg](https://github.com/nmrugg/stockfish.js)
+- [jQuery](https://jquery.com/)
