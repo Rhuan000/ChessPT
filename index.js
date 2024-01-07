@@ -1,62 +1,13 @@
+// index.js
 import { Chess } from "./node_modules/chess.js/dist/esm/chess.js";
+import { Engine } from "./engine.js";
 
-var savedPGNHistory 
-var currentNumber
-var turn
- 
-var chess = new Chess(); 
-const barMain = document.querySelector('#bar-main')
-const barChild = document.querySelector('#bar-child')
-const barChildInitialHeight = barChild.offsetHeight
-const moveScore = document.querySelector('#move-score')
+var savedPGNHistory;
+var currentNumber;
+var chess = new Chess();
+var lastCheck
+const engine = new Engine();
 
-const stockfish = new Worker('./node_modules/stockfish/src/stockfish-nnue-16.js');
-    stockfish.onmessage = (event) => {
-      const data = event.data
-      console.log(data)
-      const splicedData = data.split(' ')
-      let i = 0;
-      for(let content of splicedData){
-        if(content === "score"){
-          let scoreType = splicedData[i+1]
-          if(scoreType === "mate"){
-            let mateIn = splicedData[i+2]
-            if(turn === "b"){
-                mateIn *= -1              
-            }
-            if(turn === "w"){
-              console.log(turn, "white")
-              barChild.style.height = `${mateIn == 0 || mateIn < 0 ? '100%': '0px'}`
-            } else {
-              barChild.style.height = `${mateIn == 0 || mateIn > 0  ? '0px': '100%'}`
-
-            }
-            console.log(mateIn)
-            moveScore.innerHTML = `#${mateIn == 0 ? "" : mateIn}` 
-            
-          } else {
-            let score = splicedData[i+2]
-            score = parseInt(score, 10)
-            if(turn === "b"){
-              score *= -1
-              console.log(score)
-            }
-            score = (score/100).toFixed(2)
-            if(score < 0){
-              barChild.style.height = `${barChildInitialHeight + (((-1 * score)* 8) * (2*barChildInitialHeight)/100)}px`
-              moveScore.innerHTML = '-' + Math.abs(score)
-            }else if(score > 0){
-              barChild.style.height = `${barChildInitialHeight - ((score* 8) * (2*barChildInitialHeight)/100)}px`
-              moveScore.innerHTML = '+' + score
-            }else {
-              moveScore.innerHTML = score
-            }
-            break
-          }
-        }
-        i += 1
-      }
-};
 
 document.getElementById('pgnForm').addEventListener('submit', function (event) {
   event.preventDefault();
@@ -70,59 +21,101 @@ document.querySelector('#initial-position').addEventListener('click', initialPos
 var board1 = Chessboard('board1', {
   position: 'start',
   pieceTheme: './chessboardjs-1.0.0/img/chesspieces/wikipedia/{piece}.png',
-  draggable: false
+  draggable: false,
 });
-function initialPosition(){
-  currentNumber = -1
-  board1.position('start')
-  turn = "w"
-  stockfishAnalyze(board1.fen())
+
+function initialPosition() {
+  currentNumber = -1;
+  board1.position('start');
+  engine.analyzePosition(board1.fen(), "w");
 }
+
 function analyzePGN() {
   var pgnInput = document.getElementById('pgnInput').value;
-  pgnInput = pgnInput.split(/\r?\n/).join(':')
-  chess.reset(); // Reset the chess game
-  chess.loadPgn(pgnInput, { newlineChar: ':' })
-  stockfish.postMessage('uci')
-  stockfish.postMessage('isready')
-  savedPGNHistory = chess.history({verbose: true})
-  currentNumber = savedPGNHistory.length -1 
-  turn = chess.turn()
+  pgnInput = pgnInput.split(/\r?\n/).join(':');
+  chess.reset();
+  chess.loadPgn(pgnInput, { newlineChar: ':' });
+  
+  savedPGNHistory = chess.history({ verbose: true });
+  currentNumber = savedPGNHistory.length - 1;
+
   if (chess.fen()) {
     board1.position(chess.fen());
-    stockfishAnalyze(chess.fen())
+    engine.analyzePosition(chess.fen(), chess.turn());
+    highlightLastMove()
   } else {
     console.error('Invalid PGN. Please enter a valid chess game in PGN format.');
   }
 }
 
 function goToNextMove() {
-  if(currentNumber < savedPGNHistory.length - 1){
-      currentNumber =  currentNumber + 1
-      chess.load(savedPGNHistory[currentNumber].after)
-      board1.position(chess.fen());
-      turn = chess.turn()
-      stockfishAnalyze(chess.fen())
-    } else {
-      console.log('already in last move')
-    }
+  if (currentNumber < savedPGNHistory.length - 1) {
+    currentNumber = currentNumber + 1;
+    chess.load(savedPGNHistory[currentNumber].after);
+    board1.position(chess.fen());
+    engine.analyzePosition(chess.fen(), chess.turn());
+    highlightLastMove()
+    console.log(isKingInCheck())
+
+  } else {
+    console.log('already in the last move');
   }
-  
-  function goToPreviousMove() { 
-    if (currentNumber > 0) {
-      currentNumber = currentNumber - 1
-      chess.load(savedPGNHistory[currentNumber].after)
-      board1.position(chess.fen());
-      stockfishAnalyze(chess.fen())
-      turn = chess.turn()
-    } else { 
-     console.log('Already at the last move.');
-   }
 }
 
-function stockfishAnalyze(fen){
-  stockfish.postMessage('stop')
-  const formatedMessage = `position fen ${fen}`
-  stockfish.postMessage(formatedMessage)
-  stockfish.postMessage(`go depth ${'25'}`)
+function goToPreviousMove() {
+  if (currentNumber > 0) {
+    currentNumber = currentNumber - 1;
+    chess.load(savedPGNHistory[currentNumber].after);
+    board1.position(chess.fen());    
+    engine.analyzePosition(chess.fen(), chess.turn());
+    highlightLastMove()
+    console.log(isKingInCheck())
+  } else {
+    console.log('Already at the last move.');
+  }
+}
+
+function highlightLastMove() {
+  const fromMove = savedPGNHistory[currentNumber]?.from;
+  const toMove = savedPGNHistory[currentNumber]?.to;
+  if (fromMove) {
+    const squares = document.querySelectorAll('.square-55d63');
+    lastCheck?.classList.remove('highlight-red')
+    squares.forEach(square => square.classList.remove('highlight-white', 'highlight-black', 'highlight-red'));
+
+    const colorToHighlight = chess.turn() === 'b' ? 'white' : 'black';
+
+    squares.forEach(square => {
+      if (square.getAttribute('data-square') === fromMove || square.getAttribute('data-square') === toMove) {
+        square.classList.add(`highlight-${colorToHighlight}`);
+      } else if(square.getAttribute('data-square') === isKingInCheck()){
+        console.log(square)
+        //square.classList.add(`highlight-red`)
+        setTimeout(()=>{
+          lastCheck = square.children[1]? square.children[1]: square.children[0]
+          lastCheck.classList.add('highlight-red')
+        }
+        , 400)
+        
+      }
+    });
+  }
+}
+
+function isKingInCheck() {
+  const turn = chess.turn();
+
+  //Taking off the null items of array.  
+  const piecesArray = chess.board().map(row =>
+    row.filter(square => square !== null)
+  );
+  //combining all arrays into a single one with some item. 
+  const flattenedArray = [].concat(...piecesArray);
+
+  let kingSquare = flattenedArray.find(piece => piece.type === 'k' && piece.color === turn);
+  kingSquare = kingSquare.square
+  console.log(kingSquare, chess.inCheck())
+  if(chess.inCheck() && chess.get(kingSquare).color === turn){
+    return kingSquare
+  }
 }
