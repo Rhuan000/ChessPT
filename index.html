@@ -8,11 +8,18 @@
     <link rel="stylesheet" href="chessboardjs-1.0.0/css/chessboard-1.0.0.css">
     <link rel="shortcut icon" href="" type="image/x-icon">
 </head>
-<body>
+<body style="background-color: rgb(30,30,30);">
   <div style="display: flex;">
-    <div id="board1" style="width: 400px"></div>
+    <div id="board1" style="width: 396px; height: 396px;"></div>
+    <div id="bar-main" style="position: relative; border: 2px solid gray; height: 392px; width: 20px; background-color: white; margin-right: 10px;">
+      <div style="position: absolute; top: 49.5%; height: 4px; width: 100%; background-color: goldenrod;"></div>
+      <div id="bar-child" style="transition:1s ease-in-out; height: 50%; background-color: rgb(20,20,20);"></div>
+    </div>
+    <div style="height: 394px; margin-right: 10px; display: flex; align-items: center;">
+      <span id="move-score" style="font-size: large; font-weight: bolder; color: white; width: 55px; display: flex; justify-content: center;">0.00</span>
+    </div>
     <form action="" id="pgnForm">
-      <textarea type="text" name="pgn" id="pgnInput" style="width: 400px; height: 390px; resize: none;"></textarea>
+      <textarea type="text" name="pgn" id="pgnInput" style="background-color: rgb(30,30,30);color: white; width: 400px; height: 390px; resize: none;"></textarea>
       <button type="submit" id="analyze-pgn">Submit</button>
     </form>
   </div>
