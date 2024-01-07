@@ -13,6 +13,7 @@ const moveScore = document.querySelector('#move-score')
 const stockfish = new Worker('./node_modules/stockfish/src/stockfish-nnue-16.js');
     stockfish.onmessage = (event) => {
       const data = event.data
+      console.log(data)
       const splicedData = data.split(' ')
       let i = 0;
       for(let content of splicedData){
@@ -20,13 +21,18 @@ const stockfish = new Worker('./node_modules/stockfish/src/stockfish-nnue-16.js'
           let scoreType = splicedData[i+1]
           if(scoreType === "mate"){
             let mateIn = splicedData[i+2]
-            if(chess.turn() === "w"){
-              barChild.style.height = `${mateIn === "0" ? '100%': '0px'}`
+            if(turn === "b"){
+                mateIn *= -1              
+            }
+            if(turn === "w"){
+              console.log(turn, "white")
+              barChild.style.height = `${mateIn == 0 || mateIn < 0 ? '100%': '0px'}`
             } else {
-              barChild.style.height = `${mateIn === "0" ? '0px': '100%'}`
+              barChild.style.height = `${mateIn == 0 || mateIn > 0  ? '0px': '100%'}`
 
             }
-            moveScore.innerHTML = `#${mateIn === "0" ? "" : mateIn}` 
+            console.log(mateIn)
+            moveScore.innerHTML = `#${mateIn == 0 ? "" : mateIn}` 
             
           } else {
             let score = splicedData[i+2]
@@ -69,6 +75,7 @@ var board1 = Chessboard('board1', {
 function initialPosition(){
   currentNumber = -1
   board1.position('start')
+  turn = "w"
   stockfishAnalyze(board1.fen())
 }
 function analyzePGN() {
