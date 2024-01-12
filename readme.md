@@ -7,7 +7,7 @@ Is a project with the objective of helping beginners and intermediate chess play
 - Load games through PGN ✔
 - Client-side Stockfish 16 ✔
 - Stockfish 16 visual feedback (evaluation bar) ✔
-- Visual evaluated move highlight ✖
+- Visual evaluated move highlight ✔
 - Integration of chatgpt api ✖
 - Mentor feedback message per move ✖
 - improve app appareance ✖

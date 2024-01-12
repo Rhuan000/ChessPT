@@ -66,9 +66,17 @@ function goToNextMove() {
     console.log(isKingInCheck())
     checkMoveInterval = setInterval(()=>{
       let evaluatedMove = Math.abs(engine.movesEvalueted[currentNumber])
-      console.log(evaluatedMove)
+      const toMove = savedPGNHistory[currentNumber]?.to;
+      const fromMove = savedPGNHistory[currentNumber]?.from;
+      const fromToMove = fromMove + toMove
+      console.log(fromToMove, engine.bestNextMove[currentNumber - 1])
+      
       switch (true){
-          case evaluatedMove >= 2:
+        case(engine.bestNextMove[currentNumber -1] == fromToMove):
+          moveType = "bestMove"
+          addEvaluateSVG(moveType)
+          break
+        case evaluatedMove >= 2:
             moveType = "blunder"
             addEvaluateSVG(moveType)
             break;
@@ -80,16 +88,19 @@ function goToNextMove() {
             moveType = "inaccuracy"
             addEvaluateSVG(moveType)
             break;
-          case(evaluatedMove == "bestMove"):
-            moveType = "bestMove"
-            console.log("Best Move")
-            break
+          
+            
+            case evaluatedMove <= 0.135:
+              moveType = "excelent"
+              addEvaluateSVG(moveType)
+              break
+            
           default:
-            moveType =  "normal"
-            addEvaluateSVG("empty")
+            moveType =  "good"
+            addEvaluateSVG(moveType)
             break
       }
-    }, 1000);
+    }, 500);
 
   } else {
     console.log('already in the last move');
@@ -114,12 +125,11 @@ function highlightLastMove() {
   if (fromMove) {
     const squares = document.querySelectorAll('.square-55d63');
     lastCheck?.classList.remove('highlight-red')
-    //squares.forEach(square => square.classList.remove('highlight-white', 'highlight-black', 'highlight-red'))
-    removeSVG()
+    squares.forEach(square => square.classList.remove('highlight-white', 'highlight-black', 'highlight-red'));
+
     const colorToHighlight = chess.turn() === 'b' ? 'white' : 'black';
 
     squares.forEach(square => {
-      square.classList.remove('highlight-white', 'highlight-black', 'highlight-red')
       if (square.getAttribute('data-square') === fromMove || square.getAttribute('data-square') === toMove) {
         square.classList.add(`highlight-${colorToHighlight}`);
       } else if(square.getAttribute('data-square') === isKingInCheck()){
@@ -160,14 +170,16 @@ function addEvaluateSVG(moveType){
   const svgImage = document.createElement('img');
 
   svgImage.src = `./svgs/${moveType}.svg`; 
-  svgImage.width = 25; // Set the width as needed
-  svgImage.height = 25; // Set the height as needed]
+  svgImage.width = 15; // Set the width as needed
+  svgImage.height = 15; // Set the height as needed]
   svgImage.style.position = 'absolute';
   svgImage.style.top = '0%';
-  svgImage.style.left = '55%';
+  svgImage.style.left = '75%';
   svgImage.style.zIndex = '3';
   svgImage.classList.add('evaluation-svg')
 
+  const existingSvgs = document.querySelectorAll('.evaluation-svg');
+  existingSvgs.forEach(svg => svg.remove());
   const squares = document.querySelectorAll('.square-55d63');
   for (const square of squares) {
     if (square.getAttribute('data-square') === toMove) {
@@ -176,8 +188,4 @@ function addEvaluateSVG(moveType){
       break; // Exit the loop
     }
   }
-}
-function removeSVG(){
-  const existingSvgs = document.querySelectorAll('.evaluation-svg');
-  existingSvgs.forEach(svg => svg.remove());
 }

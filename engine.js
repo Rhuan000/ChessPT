@@ -11,6 +11,7 @@ export class Engine {
     this.score = null
     this.movesEvalueted = []
     this.movesScores = []
+    this.bestNextMove = []
     this.barChild = document.querySelector('#bar-child');
     this.moveScore = document.querySelector('#move-score');
     this.barChildInitialHeight = this.barChild.offsetHeight;
@@ -29,57 +30,17 @@ export class Engine {
     for (let content of splicedData) {
       //Checking if is a line of mate or not yet.
       if (content === "score") {
-        let scoreType = splicedData[i + 1];
+        let scoreType = splicedData[i + 1];        
 
         if (scoreType === "mate") {
-          let mateIn = splicedData[i + 2];
-
-          if (this.turn === "b") {
-            mateIn *= -1;
-          }
-          //Increase or decrease 100% of the bar side size.
-          if (this.turn === "w") {
-            this.barChild.style.height = `${mateIn == 0 || mateIn < 0 ? '100%' : '0px'}`;
-          } else {
-            this.barChild.style.height = `${mateIn == 0 || mateIn > 0 ? '0px' : '100%'}`;
-          }
-          this.moveScore.innerHTML = `#${mateIn == 0 ? "" : mateIn}`;
-
+          this.operationIfMate(splicedData, i)
         } else {
-          this.score = splicedData[i + 2];
-          this.score = parseInt(this.score, 10);
-
-          if (this.turn === "b") {
-            this.score *= -1;
-          }
-          
-          this.score = (this.score / 100).toFixed(2);
-          if(this.previousMoveNumber == this.moveNumber){
-              this.movesEvalueted[this.moveNumber] = this.score - this.previousScore
-              
-          } else if(this.previousMoveNumber < this.moveNumber) {
-            this.previousScore = this.movesScores[this.moveNumber -1] ?  this.movesScores[this.moveNumber -1] : 0
-          } else {
-            this.previousScore = 0
-          }
-          this.previousMoveNumber = this.moveNumber
-          this.movesScores[this.moveNumber] = this.score
-          
-
-          if (this.score < 0) {
-            this.barChild.style.height = `${this.barChildInitialHeight + (((-1 * this.score) * 8) * (2 * this.barChildInitialHeight) / 100)}px`;
-            this.moveScore.innerHTML = '-' + Math.abs(this.score);
-          } else if (this.score > 0) {
-            this.barChild.style.height = `${this.barChildInitialHeight - ((this.score * 8) * (2 * this.barChildInitialHeight) / 100)}px`;
-            this.moveScore.innerHTML = '+' + this.score;
-          } else {
-            this.moveScore.innerHTML = this.score;
-          }
-
-          break;
-        }
+          this.operationIfNormalScore(splicedData, i)
+        } 
+      }  else if(content == "pv"){
+        this.bestNextMove[this.moveNumber] = splicedData[i +1]
+        break
       }
-
       i += 1;
     }
   }
@@ -90,10 +51,63 @@ export class Engine {
     this.stockfish.postMessage('stop');
     const formatedMessage = `position fen ${fen}`;
     this.stockfish.postMessage(formatedMessage);
-    console.log(fen)
     this.stockfish.postMessage(`go depth ${'25'}`);
   }
+
   getActualScore(){
     return this.score
   }
+
+  operationIfNormalScore(splicedData, i){
+    this.score = splicedData[i + 2];
+    this.score = parseInt(this.score, 10);
+  
+    if (this.turn === "b") {
+      this.score *= -1;
+    }
+    
+    this.score = (this.score / 100).toFixed(2);
+    this.evaluateMove()
+  
+    if (this.score < 0) {
+      this.barChild.style.height = `${this.barChildInitialHeight + (((-1 * this.score) * 8) * (2 * this.barChildInitialHeight) / 100)}px`;
+      this.moveScore.innerHTML = '-' + Math.abs(this.score);
+    } else if (this.score > 0) {
+      this.barChild.style.height = `${this.barChildInitialHeight - ((this.score * 8) * (2 * this.barChildInitialHeight) / 100)}px`;
+      this.moveScore.innerHTML = '+' + this.score;
+    } else {
+      this.moveScore.innerHTML = this.score;
+    }
+  }
+
+  operationIfMate(splicedData, i){
+    let mateIn = splicedData[i + 2];
+
+    if (this.turn === "b") {
+      mateIn *= -1;
+    }
+    //Increase or decrease 100% of the bar side size.
+    if (this.turn === "w") {
+      this.barChild.style.height = `${mateIn == 0 || mateIn < 0 ? '100%' : '0px'}`;
+    } else {
+      this.barChild.style.height = `${mateIn == 0 || mateIn > 0 ? '0px' : '100%'}`;
+    }
+    this.moveScore.innerHTML = `#${mateIn == 0 ? "" : mateIn}`;
+  }
+
+  evaluateMove(){
+      //Evaluating proccess
+      if(this.previousMoveNumber == this.moveNumber){
+        this.movesEvalueted[this.moveNumber] = this.score - this.previousScore
+          
+      } else if(this.previousMoveNumber < this.moveNumber) {
+        this.previousScore = this.movesScores[this.moveNumber -1] ?  this.movesScores[this.moveNumber -1] : 0
+      } else {
+        this.previousScore = 0
+      }
+      this.previousMoveNumber = this.moveNumber
+      this.movesScores[this.moveNumber] = this.score 
+  }
 }
+
+
