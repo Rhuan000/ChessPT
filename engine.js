@@ -16,6 +16,8 @@ export class Engine {
     this.barChildInitialHeight = this.barChild.offsetHeight;
     this.stockfish.postMessage('uci')
     this.stockfish.postMessage('isready')
+    this.stockfish.postMessage('setoption name Use NNUE value true')
+
     this.stockfish.onmessage = this.onStockfishMessage.bind(this);
     
   }

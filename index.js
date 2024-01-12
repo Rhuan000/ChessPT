@@ -89,7 +89,7 @@ function goToNextMove() {
             addEvaluateSVG("empty")
             break
       }
-    }, 2000);
+    }, 1000);
 
   } else {
     console.log('already in the last move');
@@ -114,11 +114,12 @@ function highlightLastMove() {
   if (fromMove) {
     const squares = document.querySelectorAll('.square-55d63');
     lastCheck?.classList.remove('highlight-red')
-    squares.forEach(square => square.classList.remove('highlight-white', 'highlight-black', 'highlight-red'));
-
+    //squares.forEach(square => square.classList.remove('highlight-white', 'highlight-black', 'highlight-red'))
+    removeSVG()
     const colorToHighlight = chess.turn() === 'b' ? 'white' : 'black';
 
     squares.forEach(square => {
+      square.classList.remove('highlight-white', 'highlight-black', 'highlight-red')
       if (square.getAttribute('data-square') === fromMove || square.getAttribute('data-square') === toMove) {
         square.classList.add(`highlight-${colorToHighlight}`);
       } else if(square.getAttribute('data-square') === isKingInCheck()){
@@ -159,17 +160,14 @@ function addEvaluateSVG(moveType){
   const svgImage = document.createElement('img');
 
   svgImage.src = `./svgs/${moveType}.svg`; 
-  svgImage.width = 15; // Set the width as needed
-  svgImage.height = 15; // Set the height as needed]
+  svgImage.width = 25; // Set the width as needed
+  svgImage.height = 25; // Set the height as needed]
   svgImage.style.position = 'absolute';
   svgImage.style.top = '0%';
-  svgImage.style.left = '75%';
+  svgImage.style.left = '55%';
   svgImage.style.zIndex = '3';
   svgImage.classList.add('evaluation-svg')
 
-  const existingSvgs = document.querySelectorAll('.evaluation-svg');
-  existingSvgs.forEach(svg => svg.remove());
-  console.log(existingSvgs)
   const squares = document.querySelectorAll('.square-55d63');
   for (const square of squares) {
     if (square.getAttribute('data-square') === toMove) {
@@ -178,4 +176,8 @@ function addEvaluateSVG(moveType){
       break; // Exit the loop
     }
   }
+}
+function removeSVG(){
+  const existingSvgs = document.querySelectorAll('.evaluation-svg');
+  existingSvgs.forEach(svg => svg.remove());
 }
