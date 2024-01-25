@@ -7,9 +7,18 @@
 
 var p = require("path");
 var fs = require("fs");
+require('dotenv').config();
+const BARD_API = process.env.BARD_API;
 var dir = p.join(__dirname);
 var port = Number(process.argv[2]) || 8080;
 var execFile;
+
+
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+
+const genAI = new GoogleGenerativeAI(process.env.BARD_API);
+const model = genAI.getGenerativeModel({ model: "gemini-pro"});
+
 
 var mimeData = {
     ".html": "text/html; charset=utf-8",
@@ -107,7 +116,11 @@ function serve(req, res)
     if (url.indexOf("..") !== -1 || url.substr(0, 1) !== "/" || p.relative(dir, filename).indexOf("..") !== -1) {
         return false;
     }
-    
+    if (req.url === "/tutor" && req.method === "POST") {
+        // Handle GPT-related requests here
+        handleBARDRequest(req, res);
+        return true;
+    }
     fs.stat(filename, function (err, stats)
     {
         var resHeaders = {};
@@ -153,12 +166,42 @@ function serve(req, res)
                 });
                 stream.pipe(res);
             }
-        } else {
+        }
+        else {
             badRequest(res);
         }
     });
     
     return true;
+}
+
+async function handleBARDRequest(req, res) {
+    try {
+        // Assuming JSON data is sent in the POST request
+        let requestData = '';
+        req.on('data', chunk => {
+            requestData += chunk;
+            console.log(requestData)
+        });
+        
+        req.on('end', async () => {
+                const requestDataJSON = JSON.parse(requestData).data   
+                // Make a request to OpenAI GPT API
+                const result = await model.generateContent([requestDataJSON]);
+                const response = await result.response;
+                const text = response.text();
+                console.log(text)
+                res.writeHead(200, { 'Content-Type': 'text/plain' });
+                res.write(text);
+                res.end();
+            });
+
+    } catch (error) {
+        console.error('Error handling BARD request:', error);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.write(JSON.stringify({ error: 'Internal Server Error' }));
+        res.end();
+    }
 }
 
 function createServer(cb)
@@ -169,3 +212,4 @@ createServer(serve).listen(port, function onopen()
 {
     console.log("Listening to http://127.0.0.1:" + port);
 });
+
