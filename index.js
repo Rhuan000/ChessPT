@@ -1,14 +1,17 @@
 // index.js
 import { Chess } from "./node_modules/chess.js/dist/esm/chess.js";
 import { Engine } from "./engine.js";
+import { evaluateMove } from "./evaluating-process.js";
+import { highlightLastMove } from "./chessboard-highlight.js";
 
-var savedPGNHistory;
-var currentNumber;
-var chess = new Chess();
-var lastCheck 
+export var currentNumber;
+export var savedPGNHistory;
+
+export var chess = new Chess();
+export const engine = new Engine();
+
 var previousScore = null 
-const engine = new Engine();
-let checkMoveInterval
+
 
 document.getElementById('pgnForm').addEventListener('submit', function (event) {
   event.preventDefault();
@@ -56,51 +59,14 @@ function analyzePGN() {
 var moveType
 function goToNextMove() {
   if (currentNumber < savedPGNHistory.length - 1) {
-    clearInterval(checkMoveInterval)
     currentNumber = currentNumber + 1;
     chess.load(savedPGNHistory[currentNumber].after);
     board1.position(chess.fen());
+
     engine.analyzePosition(chess.fen(), chess.turn(), currentNumber);
+    
     highlightLastMove()
-    console.log(engine.getActualScore(), previousScore)
-    console.log(isKingInCheck())
-    checkMoveInterval = setInterval(()=>{
-      let evaluatedMove = Math.abs(engine.movesEvalueted[currentNumber])
-      const toMove = savedPGNHistory[currentNumber]?.to;
-      const fromMove = savedPGNHistory[currentNumber]?.from;
-      const fromToMove = fromMove + toMove
-      console.log(fromToMove, engine.bestNextMove[currentNumber - 1])
-      
-      switch (true){
-        case(engine.bestNextMove[currentNumber -1] == fromToMove):
-          moveType = "bestMove"
-          addEvaluateSVG(moveType)
-          break
-        case evaluatedMove >= 2:
-            moveType = "blunder"
-            addEvaluateSVG(moveType)
-            break;
-          case evaluatedMove < 2 && evaluatedMove >= 1:
-            moveType = "mistake"
-            addEvaluateSVG(moveType)
-            break;
-          case evaluatedMove >= 0.5 && evaluatedMove < 1:
-            moveType = "inaccuracy"
-            addEvaluateSVG(moveType)
-            break;
-          
-            
-            case evaluatedMove <= 0.135:
-              moveType = "excelent"
-              addEvaluateSVG(moveType)
-              break
-            
-          default:
-            moveType =  "good"
-            addEvaluateSVG(moveType)
-            break
-      }
-    }, 500);
+    evaluateMove()
 
   } else {
     console.log('already in the last move');
@@ -117,6 +83,7 @@ function goToPreviousMove() {
   } else {
     console.log('Already at the last move.');
   }
+<<<<<<< HEAD
 }
 
 function highlightLastMove() {
@@ -190,3 +157,6 @@ function addEvaluateSVG(moveType){
   }
 }
 
+=======
+}
+>>>>>>> 2842aa7fb88ffc56be05748180f766f9fa7e59d8

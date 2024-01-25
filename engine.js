@@ -26,6 +26,7 @@ export class Engine {
   onStockfishMessage(event) {
     const data = event.data;
     const splicedData = data.split(' ');
+    console.log(data)
     let i = 0;
     for (let content of splicedData) {
       //Checking if is a line of mate or not yet.
