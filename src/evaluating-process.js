@@ -7,42 +7,44 @@ export function evaluateMove(){
     clearInterval(checkMoveInterval)
     checkMoveInterval = setInterval(()=>{
       
-        let evaluatedMove = Math.abs(engine.movesEvalueted[currentNumber])
+        let evaluatedMove = Math.abs(engine.movesEvalueted[currentNumber]?.evaluated || null)
+
+
         if(evaluatedMove !== previousEvaluatedMove){
           const toMove = savedPGNHistory[currentNumber]?.to;
-          const fromMove = savedPGNHistory[currentNumber].from;
+          const fromMove = savedPGNHistory[currentNumber]?.from;
           const fromToMove = fromMove + toMove
           
           let moveType
-
+          
           switch (true){
             case(engine.bestNextMove[currentNumber -1] == fromToMove):
-              moveType = "bestMove"
-              addEvaluateSVG(moveType)
+              engine.movesEvalueted[currentNumber].moveType = "bestMove"
+              addEvaluateSVG("bestMove")
               break
 
             case evaluatedMove >= 2:
-                moveType = "blunder"
-                addEvaluateSVG(moveType)
+                engine.movesEvalueted[currentNumber].moveType = "blunder"
+                addEvaluateSVG("blunder")
                 break;
 
               case evaluatedMove < 2 && evaluatedMove >= 1:
-                moveType = "mistake"
-                addEvaluateSVG(moveType)
+                engine.movesEvalueted[currentNumber].moveType = "mistake"
+                addEvaluateSVG("mistake")
                 break;
               case evaluatedMove >= 0.5 && evaluatedMove < 1:
-                moveType = "inaccuracy"
-                addEvaluateSVG(moveType)
+                engine.movesEvalueted[currentNumber].moveType = "inaccuracy"
+                addEvaluateSVG("inaccuracy")
                 break;
                 
                 case evaluatedMove <= 0.135:
-                  moveType = "excelent"
-                  addEvaluateSVG(moveType)
+                  engine.movesEvalueted[currentNumber].moveType = "excelent"
+                  addEvaluateSVG("excelent")
                   break
                   
                   default:
-                    moveType =  "good"
-                    addEvaluateSVG(moveType)
+                    engine.movesEvalueted[currentNumber].moveType =  "good"
+                    addEvaluateSVG("good")
                     break
                   }
                   previousEvaluatedMove = evaluatedMove

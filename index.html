@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ChessPT</title>
-    <script src="./jquery.min.js"></script>
-    <link rel="stylesheet" href="chessboardjs-1.0.0/css/chessboard-1.0.0.css">
-    <link rel="shortcut icon" href="" type="image/x-icon">
+    <script src="src/utils/jquery/jquery.min.js"></script>
+    <link rel="stylesheet" href="src/public/css/chessboard-1.0.0.css">
+    <link rel="shortcut icon" href="./src/public/favicon.ico" type="image/x-icon">
 </head>
 <body style="background-color: rgb(30,30,30);">
   <div style="display: flex;">
@@ -27,13 +27,17 @@
     <button type="button" id="previous-move">Previous</button>
     <button type="button" id="next-move">Next</button>
     <button type="button" id="initial-position">Initial Position</button>
+    <button type="button" id="move-detail">Get Move Detail</button>
   </div>
-
+  <div  style="display: flex; align-items: center; padding-top: 1rem">
+    <img src="src/public/assets/pngs/pngegg.png" alt="robot image" style="width: 60px;height: 70px;">
+    <span id="move-response" style="padding-left: 0.5rem; color: whitesmoke;">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Tempore voluptates, expedita fugiat reiciendis mollitia, laboriosam laborum minus sequi animi fugit aperiam labore blanditiis architecto cupiditate totam facere aspernatur, eligendi deserunt?</span>
+  </div>
   <!-- Include chess.js -->
-  <script type="module" src="./node_modules/chess.js/dist/esm/chess.js"></script>
+  <script type="module" src="node_modules/chess.js/dist/esm/chess.js"></script>
   <!-- Include chessboard.js -->
-  <script src="chessboardjs-1.0.0/js/chessboard-1.0.0.js"></script>
-  <!-- Include your main script -->
-  <script type="module" src="index.js"></script>
+  <script src="src/utils/chessboard/chessboard-1.0.0.js"></script>
+  <!-- Include main script -->
+  <script type="module" src="/src/index.js"></script>
 </body>
 </html>

@@ -576,7 +576,7 @@
     // default piece theme is wikipedia
     if (!config.hasOwnProperty('pieceTheme') ||
         (!isString(config.pieceTheme) && !isFunction(config.pieceTheme))) {
-      config.pieceTheme = 'img/chesspieces/wikipedia/{piece}.png'
+      config.pieceTheme = '../public/pngs/chesspieces/{piece}.png'
     }
 
     // animation speeds
@@ -655,7 +655,7 @@
     // ensure the config object is what we expect
     config = expandConfigArgumentShorthand(config)
     config = expandConfig(config)
-
+    config.pieceTheme = 'src/public/assets/pngs/chesspieces/{piece}.png'
     // DOM elements
     var $board = null
     var $draggedPiece = null

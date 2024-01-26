@@ -32,7 +32,7 @@ export function addEvaluateSVG(moveType){
     const toMove = savedPGNHistory[currentNumber]?.to;
     const svgImage = document.createElement('img');
   
-    svgImage.src = `./svgs/${moveType}.svg`; 
+    svgImage.src = `/src/public/assets/svgs/${moveType}.svg`; 
     svgImage.width = 15; // Set the width as needed
     svgImage.height = 15; // Set the height as needed]
     svgImage.style.position = 'absolute';

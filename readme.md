@@ -8,8 +8,8 @@ Is a project with the objective of helping beginners and intermediate chess play
 - Client-side Stockfish 16 ✔
 - Stockfish 16 visual feedback (evaluation bar) ✔
 - Visual evaluated move highlight ✔
-- Integration of chatgpt api ✖
-- Mentor feedback message per move ✖
+- Integration of ChatGPT api (switched for BARD)  ✔
+- Mentor feedback message per move (sadly, ChatGPT needs to pay and BARD is not good for now :'/ ) ✔ 
 - improve app appareance ✖
 - Lichess history ✖
 

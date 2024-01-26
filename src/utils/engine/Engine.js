@@ -1,8 +1,6 @@
-// engine.js
-
 export class Engine {
   constructor() {
-    this.stockfish = new Worker('./node_modules/stockfish/src/stockfish-nnue-16.js');
+    this.stockfish = new Worker('../node_modules/stockfish/src/stockfish-nnue-16.js');
     this.turn = "";
     this.previousMoveNumber = 0;
     this.moveNumber = 0;
@@ -26,7 +24,7 @@ export class Engine {
   onStockfishMessage(event) {
     const data = event.data;
     const splicedData = data.split(' ');
-    console.log(data)
+
     let i = 0;
     for (let content of splicedData) {
       //Checking if is a line of mate or not yet.
@@ -99,7 +97,7 @@ export class Engine {
   evaluateMove(){
       //Evaluating proccess
       if(this.previousMoveNumber == this.moveNumber){
-        this.movesEvalueted[this.moveNumber] = this.score - this.previousScore
+        this.movesEvalueted[this.moveNumber] = {evaluated: this.score - this.previousScore}
           
       } else if(this.previousMoveNumber < this.moveNumber) {
         this.previousScore = this.movesScores[this.moveNumber -1] ?  this.movesScores[this.moveNumber -1] : 0

@@ -108,15 +108,17 @@ function serve(req, res)
     url = decodeURI(url);
     
     /// Redirect dirs to index.html.
-    url = url.replace(/(.*\/)$/, "$1index.html");
-    
+    url = url.replace(/\/$/, "/index.html");
+
+
     filename = p.join(dir, url);
     
     /// Make sure that the request within the allowed directory.
     if (url.indexOf("..") !== -1 || url.substr(0, 1) !== "/" || p.relative(dir, filename).indexOf("..") !== -1) {
         return false;
     }
-    if (req.url === "/tutor" && req.method === "POST") {
+
+    if (req.url === "/moveDetail" && req.method === "POST") {
         // Handle GPT-related requests here
         handleBARDRequest(req, res);
         return true;
@@ -140,7 +142,6 @@ function serve(req, res)
                 /// Firefox needs these headers in order to handle shared array buffers for multi-threaded WASM.
                 resHeaders["Cross-Origin-Embedder-Policy"] = "require-corp";
                 resHeaders["Cross-Origin-Opener-Policy"] = "same-origin";
-                
                 range = parseRange(req.headers, stats.size);
                 
                 if (range) {
