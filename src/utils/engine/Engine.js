@@ -109,7 +109,7 @@ export class Engine {
     console.log(this.previousPositionIndex, this.positionIndex)
       //Evaluating proccess
       if(this.previousPositionIndex === this.positionIndex){
-        this.Position.evaluatedScore = this.Position.score - this.positions[this.positionIndex -1].score
+        this.Position.evaluatedScore = this.Position.score - this.positions[this.positionIndex -1]?.score
       } else if(this.previousPositionIndex > this.positionIndex) {
         this.previousScore = this.positions[this.positionIndex -1].score ?  this.positions[this.positionIndex -1].score : 0.22    
       } 

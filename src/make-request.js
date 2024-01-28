@@ -1,6 +1,6 @@
 export async function makeBARDRequest(data) {
     console.log('making request')
-    const url = 'http://localhost:8080/moveDetail';
+    const url = 'https://chess-pt.onrender.com/moveDetail';
 
   
     try {

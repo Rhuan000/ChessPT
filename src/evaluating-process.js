@@ -37,7 +37,7 @@ export function evaluateMove(){
                 addEvaluateSVG("inaccuracy")
                 break;
                 
-                case evaluatedMove <= 0.135:
+                case evaluatedMove <= 0.13:
                   engine.Position.moveType = "excelent"
                   addEvaluateSVG("excelent")
                   break
