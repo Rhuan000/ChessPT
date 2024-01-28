@@ -51,10 +51,10 @@ function analyzePGN() {
 
   if (chess.fen()) {
     board1.position(chess.fen());
-    engine.analyzePosition(chess.fen(), chess.turn(), currentNumber);
+    engine.analyzePosition(chess.fen(), savedPGNHistory[currentNumber].from,  savedPGNHistory[currentNumber].to, currentNumber, chess.turn());
     highlightLastMove()
   } else {
-    console.error('Invalid PGN. Please enter a valid chess game in PGN format.');
+    console.error('Invalid PGN. Please enter a valid chess game in PGN format.');[]
   }
 }
 
@@ -65,7 +65,7 @@ function goToNextMove() {
     chess.load(savedPGNHistory[currentNumber].after);
     board1.position(chess.fen());
 
-    engine.analyzePosition(chess.fen(), chess.turn(), currentNumber);
+    engine.analyzePosition(chess.fen(), savedPGNHistory[currentNumber].from,  savedPGNHistory[currentNumber].to, currentNumber, chess.turn());
     
     highlightLastMove()
     evaluateMove()
@@ -80,7 +80,7 @@ function goToPreviousMove() {
     currentNumber = currentNumber - 1;
     chess.load(savedPGNHistory[currentNumber].after);
     board1.position(chess.fen());
-    engine.analyzePosition(chess.fen(), chess.turn(), currentNumber);
+    engine.analyzePosition(chess.fen(), savedPGNHistory[currentNumber].from,  savedPGNHistory[currentNumber].to, currentNumber, chess.turn());
     highlightLastMove()
   } else {
     console.log('Already at the last move.');
@@ -91,7 +91,7 @@ import { makeBARDRequest } from "./make-request.js";
 async function moveDetail(){
   const lastMove = savedPGNHistory[currentNumber].san;
   const data = {
-    data: `Analyze this position ${chess.fen()} the last move was ${lastMove} why stockfish about this move says ${engine.movesEvalueted[currentNumber].moveType}, answer with 200 max caracters. now is ${chess.turn()} to should make a move.`
+    data: `Analyze this position ${chess.fen()} the last move was ${lastMove} made by ${chess.turn() === "w" ? "black" : "white"} why stockfish about this move says ${engine.Position.moveType}, answer with 200 max caracters.`
   }
   console.log(data)
   const jsonData = data

@@ -17,7 +17,7 @@ export function highlightLastMove() {
         } else if(square.getAttribute('data-square') === isKingInCheck()){
           //square.classList.add(`highlight-red`)
           setTimeout(()=>{
-            lastCheck = square.children[1]? square.children[1]: square.children[0]
+            lastCheck = square.children[2] ? square.children[2]: square.children[1] ? square.children[1] : square.children[0]
             lastCheck.classList.add('highlight-red')
           }
           , 400)
@@ -66,7 +66,7 @@ export function isKingInCheck() {
   
     let kingSquare = flattenedArray.find(piece => piece.type === 'k' && piece.color === turn);
     kingSquare = kingSquare.square
-    console.log(kingSquare, chess.inCheck())
+
     if(chess.inCheck() && chess.get(kingSquare).color === turn){
       return kingSquare
     }
