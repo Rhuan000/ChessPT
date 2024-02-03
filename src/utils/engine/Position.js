@@ -6,7 +6,8 @@ export class Position {
         this.moveNumber = moveNumber
         this.nextToPlay = nextToPlay
         this.moveType
-        this.score 
+        this.score
+        this.score2
         this.evaluatedScore 
         this.bestNextMove 
     }

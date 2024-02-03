@@ -1,14 +1,16 @@
 // index.js
 import { Chess } from "../node_modules/chess.js/dist/esm/chess.js";
 import { Engine } from "./utils/engine/Engine.js";
-import { evaluateMove } from "./evaluating-process.js";
 import { highlightLastMove } from "./chessboard-highlight.js";
+import { getSquareFeedback } from "./feedback-square.js";
 
 export var currentNumber;
 export var savedPGNHistory;
 
-export var chess = new Chess();
 export var engine = new Engine();
+export var chess = new Chess();
+engine.initListeners()
+
 
 var previousScore = null 
 
@@ -68,7 +70,7 @@ function goToNextMove() {
     engine.analyzePosition(chess.fen(), savedPGNHistory[currentNumber].from,  savedPGNHistory[currentNumber].to, currentNumber, chess.turn());
     
     highlightLastMove()
-    evaluateMove()
+    getSquareFeedback()
 
   } else {
     console.log('already in the last move');
